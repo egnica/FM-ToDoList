@@ -1,6 +1,6 @@
 # Breakdown of the URL structure of the Filemaker API
 
-## https://FMS-Live01.barlowresearch.com/fmi/data/vLatest/databases/ToDoList/layouts/ToDoList/records
+### https://FMS-Live01.barlowresearch.com/fmi/data/vLatest/databases/ToDoList/layouts/ToDoList/records
 
 1. **https://FMS-Live01.barlowresearch.com**: This is the base URL—the server’s address where FileMaker is hosted.
 2. **fmi/data/vLatest:** This part specifies that we’re using the FileMaker Data API (hence, fmi/data) and specifies the version (vLatest).
