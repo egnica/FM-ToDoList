@@ -1,12 +1,12 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
 
-export async function GET() {
-  const baseURL =
-    "https://FMS-Live01.barlowresearch.com/fmi/data/vLatest/databases/ToDoList";
+const baseURL =
+  "https://FMS-Live01.barlowresearch.com/fmi/data/vLatest/databases/ToDoList";
 
+//Obtain a Session Token
+async function authenticateWithFileMaker() {
   try {
-    // Step 1: Obtain a Session Token
     const authResponse = await axios.post(
       `${baseURL}/sessions`,
       {},
@@ -17,9 +17,20 @@ export async function GET() {
         },
       }
     );
-    const token = authResponse.data.response.token;
+    return authResponse.data.response.token;
+  } catch (error) {
+    console.error("Error during authentication:", error);
+    throw new Error("Authentication failed");
+  }
+}
 
-    // Step 2: Use the Token to Fetch Records
+// Updated GET function to use the helper function
+export async function GET() {
+  try {
+    // Use the helper function to get a session token
+    const token = await authenticateWithFileMaker();
+
+    // Fetch records from FileMaker using the session token
     const dataResponse = await axios.get(
       `${baseURL}/layouts/ToDoList/records`,
       {
@@ -29,7 +40,6 @@ export async function GET() {
       }
     );
 
-    // Step 3: Return the Data to the Client using NextResponse
     return NextResponse.json(dataResponse.data);
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -40,3 +50,20 @@ export async function GET() {
   }
 }
 
+//Add POST function to create a new task
+
+export async function POST(req) {
+  try {
+    // Get the session token using the helper function
+    const token = await authenticateWithFileMaker();
+
+    // Placeholder response to confirm authentication works
+    return NextResponse.json({ message: "Authenticated successfully", token });
+  } catch (error) {
+    console.error("Error during authentication:", error);
+    return NextResponse.json(
+      { error: "Authentication failed" },
+      { status: 500 }
+    );
+  }
+}
