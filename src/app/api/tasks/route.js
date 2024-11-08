@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 const baseURL =
   "https://FMS-Live01.barlowresearch.com/fmi/data/vLatest/databases/ToDoList";
 
-//Obtain a Session Token
+//*****Obtain a Session Token************
 async function authenticateWithFileMaker() {
   try {
     const authResponse = await axios.post(
@@ -90,6 +90,48 @@ export async function POST(req) {
     console.error("Error creating task:", error);
     return NextResponse.json(
       { error: "Failed to create task" },
+      { status: 500 }
+    );
+  }
+}
+export async function PUT(req) {
+  try {
+    console.log("Step 1: Received PUT request");
+
+    // Step 2: Authenticate and get the session token
+    const token = await authenticateWithFileMaker();
+    console.log("Step 2: Received session token:", token);
+
+    // Step 3: Parse the request body to get recordId and new description
+    const { recordId, description } = await req.json();
+    console.log("Step 3: Parsed request body:", { recordId, description });
+
+    // Step 4: Send the update request to FileMaker
+    const updateResponse = await axios.patch(
+      `${baseURL}/layouts/ToDoList/records/${recordId}`,
+      {
+        fieldData: {
+          Description: description,
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    // Step 5: Log and return the response from FileMaker
+    console.log("Step 5: FileMaker update response:", updateResponse.data);
+    return NextResponse.json({
+      message: "Task updated successfully",
+      data: updateResponse.data,
+    });
+  } catch (error) {
+    console.error("Error updating task:", error);
+    return NextResponse.json(
+      { error: "Failed to update task" },
       { status: 500 }
     );
   }
