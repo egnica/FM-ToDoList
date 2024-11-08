@@ -51,18 +51,45 @@ export async function GET() {
 }
 
 //Add POST function to create a new task
-
 export async function POST(req) {
   try {
-    // Get the session token using the helper function
-    const token = await authenticateWithFileMaker();
+    console.log("Step 1: Received POST request");
 
-    // Placeholder response to confirm authentication works
-    return NextResponse.json({ message: "Authenticated successfully", token });
+    // Step 2: Authenticate and get the session token
+    const token = await authenticateWithFileMaker();
+    console.log("Step 2: Received session token:", token);
+
+    // Step 3: Parse the request body to get the JSON data
+    const { description } = await req.json();
+    console.log("Step 3: Parsed request body:", { description });
+
+    // Step 4: Send the request to create a new task in FileMaker
+    const createResponse = await axios.post(
+      `${baseURL}/layouts/ToDoList/records`,
+      {
+        fieldData: {
+          Description: description,
+          Completed: 0, // Default to not completed
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    // Step 5: Log and return the response from FileMaker
+    console.log("Step 5: FileMaker create response:", createResponse.data);
+    return NextResponse.json({
+      message: "Task created successfully",
+      data: createResponse.data,
+    });
   } catch (error) {
-    console.error("Error during authentication:", error);
+    console.error("Error creating task:", error);
     return NextResponse.json(
-      { error: "Authentication failed" },
+      { error: "Failed to create task" },
       { status: 500 }
     );
   }

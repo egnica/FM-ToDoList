@@ -16,4 +16,6 @@
 4. **layouts/ToDoList/records:** This part tells the API to retrieve records from a layout named ToDoList.
 
 ## Adding NextResponse as a utility
+
 - NextResponse.json() is our way of sending structured, JSON-formatted data back to the client, along with the appropriate status code if needed. This keeps responses consistent, whether they’re for successful requests or errors.
+- The app router design doesn’t use req and res - "POST(req, res)" directly. Instead, you handle the request with req and create the response with NextResponse.
