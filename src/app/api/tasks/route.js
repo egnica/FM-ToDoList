@@ -24,10 +24,12 @@ async function authenticateWithFileMaker() {
   }
 }
 
-// Updated GET function to use the helper function
+// ********* SESSION TOKEN END***************
+
+//************ * GET function
 export async function GET() {
   try {
-    // Use the helper function to get a session token
+    // Use the authenticateWithFileMaker function to get a session token
     const token = await authenticateWithFileMaker();
 
     // Fetch records from FileMaker using the session token
@@ -50,7 +52,7 @@ export async function GET() {
   }
 }
 
-//Add POST function to create a new task
+// **************    *Add POST function to create a new task
 export async function POST(req) {
   try {
     console.log("Step 1: Received POST request");
@@ -94,6 +96,8 @@ export async function POST(req) {
     );
   }
 }
+
+// PUT Request
 export async function PUT(req) {
   try {
     console.log("Step 1: Received PUT request");
